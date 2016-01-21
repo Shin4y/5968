@@ -30,149 +30,89 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 
 /**
  * TeleOp Mode
  * <p>
  * Enables control of the robot via the gamepad
  */
-public class HertzTeleOp extends K9TeleOp {
+public class HertzTeleOp extends LinearOpMode {
+    DcMotor leftMotors, rightMotors, bucket, collection;
+    DcMotorController DcMotorController1;
+    double bucketPower, collectionPower, leftPower, rightPower;
 
-    // >50 is farther from ground, <50 is closer to ground (servos)
-    //ARM
-    final static double jointMinRange  = 0.20;
-    final static double jointMaxRange  = 0.90;
-
-    // position of each joint servo/motor.
-    double jointPosition;
-
-    // amount to change the joint servo position.
-    double jointDelta = 0.1;
-    //END ARM
-
-
-    DcMotor rightMotors, leftMotors, jointAngle, jointLength;
-    Servo joint;
-
-
-    public HertzTeleOp() {
-
-    }
-
-    // Code to run when the op mode is initialized goes here
-    @Override
-    public void init() {
-
-
-		/*
-		 * Use the hardwareMap to get the dc motors and servos by name. Note
-		 * that the names of the devices must match the names used when you
-		 * configured your robot and created the configuration file.
-		 */
+    public void runOpMode() throws InterruptedException {
 
         //WHEELS ---
-        leftMotors = hardwareMap.dcMotor.get("motor_b_left");
-        rightMotors = hardwareMap.dcMotor.get("motor_b_right");
+        leftMotors = hardwareMap.dcMotor.get("motor_left");
+        rightMotors = hardwareMap.dcMotor.get("motor_right");
         leftMotors.setDirection(DcMotor.Direction.REVERSE);
         //WHEELS END ---
 
-        //ARM ---
-        jointAngle = hardwareMap.dcMotor.get("joint_angle");
-        jointLength = hardwareMap.dcMotor.get("joint_length");
-        joint = hardwareMap.servo.get("joint_joint");
+        //COLLECTION MECH ---
+        bucket = hardwareMap.dcMotor.get("bucket");
+        collection = hardwareMap.dcMotor.get("collection");
+        //COLLECTION MECH END ---
 
-        // assign the starting position of the joint joint
-        jointPosition = 0.2;
-        //ARM END ---
-    }
+        //DCMOTORCONTROLLER ---
+        DcMotorController1 = hardwareMap.dcMotorController.get("DcMotorController1");
+        //DCMOTORCONTROLLER ---
 
-    // This method will be called repeatedly in a loop
-    @Override
-    public void loop() {
+        //ENCODERS ---
+        leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS); //Resets encoders
+        while (leftMotors.getCurrentPosition() != 0) {
+            leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+            waitOneFullHardwareCycle();
+        }
+
+        // This method will be called repeatedly in a loop
         // Available mappable buttons:
         // left_stick_y/x, right_stick_y/x, a, b, x, y, left_trigger/bumper, right_trigger/bumper
         // left_stick_button, right_stick_button, dpad_up/down/left/right
+        rightPower = -gamepad1.right_stick_y;
+        leftPower = -gamepad1.left_stick_y;
 
-        // throttle: left_stick_y ranges from -1 to 1, where -1 is full up, and 1 is full down
-        // direction: left_stick_x ranges from -1 to 1, where -1 is full left and 1 is full right
-        float throttle = -gamepad1.left_stick_y;
-        float direction = gamepad1.left_stick_x;
-        float right = throttle - direction;
-        float left = throttle + direction;
+        if (gamepad1.dpad_down && bucketPower > -1) {
+            bucketPower = -0.2;
+        } else if (gamepad1.dpad_up && bucketPower < 1) {
+            bucketPower = +0.2;
+        } else {
+            bucketPower = 0;
+        }
+
+        if (gamepad1.left_bumper) {
+            collectionPower = -1;
+        } else if (gamepad1.right_bumper) {
+            collectionPower = 1;
+        } else {
+            collectionPower = 0;
+        }
+
 
         // clip and then scale the power values
-        right = Range.clip(right, -1, 1);
-        left = Range.clip(left, -1, 1);
-        right = (float)scaleInput(right);
-        left =  (float)scaleInput(left);
+        rightPower = Math.signum(rightPower);
+        leftPower = Math.signum(leftPower);
+
+
         // write the values to the motors
-        rightMotors.setPower(right);
-        leftMotors.setPower(left);
+        rightMotors.setPower(rightPower);
+        leftMotors.setPower(leftPower);
 
+        collection.setPower(collectionPower);
+        bucket.setPower(bucketPower);
 
-        // Update the jointPosition variable
-        if (gamepad1.a) {           //increases
-            jointPosition += jointDelta;
-        }
-        else if (gamepad1.y) {      //decreases
-            jointPosition -= jointDelta;
-        }
-        // Clip the joint position
-        jointPosition = Range.clip(jointPosition, jointMinRange, jointMaxRange);
-        // Update the physical joint position
-        joint.setPosition(jointPosition);
-
-
-
-		/*
-		 * Send telemetry data back to driver station. Note that if we are using
-		 * a legacy NXT-compatible motor controller, then the getPower() method
-		 * will return a null value. The legacy NXT-compatible motor controllers
-		 * are currently write only.
-		 */
+        //Log to logs
         telemetry.addData("Text", "*** Robot Data***");
-        telemetry.addData("joint", "joint:  " + String.format("%.2f", jointPosition));
-        telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
-        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
+        telemetry.addData("left tgt pwr", "left  pwr: " + String.format("%.2f", leftPower));
+        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", rightPower));
+        telemetry.addData("bucket tgt pwr", "bucket pwr: " + String.format("%.2f", bucketPower));
+        telemetry.addData("collection tgt pwr: ", "collection pwr" + String.format("%.2f", collectionPower));
+
+
+//Lest's Meme
 
     }
-
-    /*
-     * Code to run when the op mode is first disabled goes here
-     *
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
-     */
-    @Override
-    public void stop() {
-
-    }
-
-    //Scales joystick input (returns double)
-    double scaleInput(double dVal)  {
-        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 };
-
-        // get the corresponding index for the scaleInput array.
-        int index = (int) (dVal * 16.0);
-        if (index < 0) {
-            index = -index;
-        } else if (index > 16) {
-            index = 16;
-        }
-
-        double dScale = 0.0;
-        if (dVal < 0) {
-            dScale = -scaleArray[index];
-        } else {
-            dScale = scaleArray[index];
-        }
-
-        return dScale;
-    }
-
 }
