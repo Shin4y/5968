@@ -41,78 +41,82 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
  */
 public class HertzTeleOp extends LinearOpMode {
     DcMotor leftMotors, rightMotors, bucket, collection;
-    DcMotorController DcMotorController1;
+    DcMotorController DcMotorController1, DcMotorController2;
     double bucketPower, collectionPower, leftPower, rightPower;
 
     public void runOpMode() throws InterruptedException {
-
         //WHEELS ---
         leftMotors = hardwareMap.dcMotor.get("motor_left");
         rightMotors = hardwareMap.dcMotor.get("motor_right");
         leftMotors.setDirection(DcMotor.Direction.REVERSE);
-        //WHEELS END ---
 
         //COLLECTION MECH ---
         bucket = hardwareMap.dcMotor.get("bucket");
         collection = hardwareMap.dcMotor.get("collection");
-        //COLLECTION MECH END ---
 
         //DCMOTORCONTROLLER ---
         DcMotorController1 = hardwareMap.dcMotorController.get("DcMotorController1");
-        //DCMOTORCONTROLLER ---
+        DcMotorController2 = hardwareMap.dcMotorController.get("DcMotorController2");
 
-        //ENCODERS ---
-        leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS); //Resets encoders
+        //ENCODER ---
+        leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS); //Resets encoder
         while (leftMotors.getCurrentPosition() != 0) {
             leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS);
             waitOneFullHardwareCycle();
         }
 
-        // This method will be called repeatedly in a loop
-        // Available mappable buttons:
-        // left_stick_y/x, right_stick_y/x, a, b, x, y, left_trigger/bumper, right_trigger/bumper
-        // left_stick_button, right_stick_button, dpad_up/down/left/right
-        rightPower = -gamepad1.right_stick_y;
-        leftPower = -gamepad1.left_stick_y;
+        waitForStart();
 
-        if (gamepad1.dpad_down && bucketPower > -1) {
-            bucketPower = -0.2;
-        } else if (gamepad1.dpad_up && bucketPower < 1) {
-            bucketPower = +0.2;
-        } else {
-            bucketPower = 0;
+        while (opModeIsActive()) {
+            // This method will be called repeatedly in a loop
+            // Available mappable buttons:
+            // left_stick_y/x, right_stick_y/x, a, b, x, y, left_trigger/bumper, right_trigger/bumper
+            // left_stick_button, right_stick_button, dpad_up/down/left/right
+
+            //A more controlled, less violent movement
+            if (gamepad1.left_stick_y > 0 && leftPower < 1) {
+                leftPower =+ 0.25;
+            } else if (gamepad1.left_stick_y < 0 && leftPower > -1) {
+                leftPower =- 0.25;
+            }else if (gamepad1.right_stick_y > 0 && rightPower < 1) {
+                rightPower =+ 0.25;
+            } else if (gamepad1.right_stick_y < 0 && rightPower > -1) {
+                rightPower =- 0.25;
+            } else {
+                rightPower = 0;
+                leftPower = 0;
+            }
+
+            //Slowly raise/lower the bucket
+            if (gamepad1.dpad_down && bucketPower > -1) {
+                bucketPower =- 0.2;
+            } else if (gamepad1.dpad_up && bucketPower < 1) {
+                bucketPower =+ 0.2;
+            } else {
+                bucketPower = 0;
+            }
+
+            //Make the collectors
+            if (gamepad1.left_bumper) {
+                collectionPower = -1;
+            } else if (gamepad1.right_bumper) {
+                collectionPower = 1;
+            }
+
+            // write the values to the motors
+            rightMotors.setPower(rightPower);
+            leftMotors.setPower(leftPower);
+            collection.setPower(collectionPower);
+            bucket.setPower(bucketPower);
+
+            //Log to logs
+            telemetry.addData("Text", "*** Robot Data***");
+            telemetry.addData("left tgt pwr", "left  pwr: " + String.format("%.2f", leftPower));
+            telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", rightPower));
+            telemetry.addData("bucket tgt pwr", "bucket pwr: " + String.format("%.2f", bucketPower));
+            telemetry.addData("collection tgt pwr: ", "collection pwr" + String.format("%.2f", collectionPower));
+            waitOneFullHardwareCycle();
         }
-
-        if (gamepad1.left_bumper) {
-            collectionPower = -1;
-        } else if (gamepad1.right_bumper) {
-            collectionPower = 1;
-        } else {
-            collectionPower = 0;
-        }
-
-
-        // clip and then scale the power values
-        rightPower = Math.signum(rightPower);
-        leftPower = Math.signum(leftPower);
-
-
-        // write the values to the motors
-        rightMotors.setPower(rightPower);
-        leftMotors.setPower(leftPower);
-
-        collection.setPower(collectionPower);
-        bucket.setPower(bucketPower);
-
-        //Log to logs
-        telemetry.addData("Text", "*** Robot Data***");
-        telemetry.addData("left tgt pwr", "left  pwr: " + String.format("%.2f", leftPower));
-        telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", rightPower));
-        telemetry.addData("bucket tgt pwr", "bucket pwr: " + String.format("%.2f", bucketPower));
-        telemetry.addData("collection tgt pwr: ", "collection pwr" + String.format("%.2f", collectionPower));
-
-
-//Lest's Meme
-
     }
 }
+//Lest's Meme
