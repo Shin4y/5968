@@ -38,6 +38,8 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
  * TeleOp Mode
  * <p>
  * Enables control of the robot via the gamepad
+ *
+ * Written by; Sa'id Kharboutli
  */
 public class HertzTeleOp extends LinearOpMode {
     DcMotor leftMotors, rightMotors, bucket, collection;
@@ -46,8 +48,8 @@ public class HertzTeleOp extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         //WHEELS ---
-        leftMotors = hardwareMap.dcMotor.get("motor_left");
-        rightMotors = hardwareMap.dcMotor.get("motor_right");
+        rightMotors = hardwareMap.dcMotor.get("motors_right");
+        leftMotors = hardwareMap.dcMotor.get("motors_left");
         leftMotors.setDirection(DcMotor.Direction.REVERSE);
 
         //COLLECTION MECH ---
@@ -74,14 +76,14 @@ public class HertzTeleOp extends LinearOpMode {
             // left_stick_button, right_stick_button, dpad_up/down/left/right
 
             //A more controlled, less violent movement
-            if (gamepad1.left_stick_y > 0 && leftPower < 1) {
-                leftPower =+ 0.25;
-            } else if (gamepad1.left_stick_y < 0 && leftPower > -1) {
+            if (gamepad1.left_stick_y > 0 && leftPower > -1) {
                 leftPower =- 0.25;
-            }else if (gamepad1.right_stick_y > 0 && rightPower < 1) {
-                rightPower =+ 0.25;
-            } else if (gamepad1.right_stick_y < 0 && rightPower > -1) {
+            } else if (gamepad1.left_stick_y < 0 && leftPower < 1) {
+                leftPower =+ 0.25;
+            }else if (gamepad1.right_stick_y > 0 && rightPower > -1) {
                 rightPower =- 0.25;
+            } else if (gamepad1.right_stick_y < 0 && rightPower < 1) {
+                rightPower =+ 0.25;
             } else {
                 rightPower = 0;
                 leftPower = 0;
