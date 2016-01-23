@@ -37,23 +37,37 @@ public class HertzAutonomous extends LinearOpMode {
 
         Thread.sleep(10);
         while (opModeIsActive()) {
-            leftMotors.setTargetPosition(1440);
+            leftMotors.setTargetPosition(2880);
             leftMotors.setPower(1);
             rightMotors.setPower(1);
 
-            
+            while (leftMotors.getCurrentPosition() != 2880) {
+                waitOneFullHardwareCycle();
+            }
+
+            leftMotors.setTargetPosition(4320);
+            leftMotors.setPower(0.5);
+            rightMotors.setPower(-0.5);
+
+            while (leftMotors.getCurrentPosition() != 5760) {
+                waitOneFullHardwareCycle();
+            }
+
+            leftMotors.setTargetPosition(8640);
+            leftMotors.setPower(1);
+            rightMotors.setPower(1);
+
+            while (leftMotors.getCurrentPosition() != 8640) {
+                waitOneFullHardwareCycle();
+            }
 
             leftMotors.setPower(0);
             rightMotors.setPower(0);
 
-            leftMotors.setTargetPosition(1440);
-            leftMotors.setPower(0.5);
-            rightMotors.setPower(-0.5);
-
-            if (leftMotors.getCurrentPosition() == 1440) {
-        }
-
             waitOneFullHardwareCycle();
+
+            telemetry.addData("Autonomous:", " Finished");
+
         }
     }
 }

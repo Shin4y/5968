@@ -41,10 +41,9 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
  *
  * Written by; Sa'id Kharboutli
  */
-public class HertzTeleOp extends LinearOpMode {
-    DcMotor leftMotors, rightMotors, bucket, collection;
-    DcMotorController DcMotorController1, DcMotorController2;
-    double bucketPower, collectionPower, leftPower, rightPower;
+public class HertzPresentation extends LinearOpMode {
+    DcMotor leftMotors, rightMotors;
+    double leftPower, rightPower;
 
     public void runOpMode() throws InterruptedException {
         //WHEELS ---
@@ -53,8 +52,8 @@ public class HertzTeleOp extends LinearOpMode {
         leftMotors.setDirection(DcMotor.Direction.REVERSE);
 
         //COLLECTION MECH ---
-        bucket = hardwareMap.dcMotor.get("bucket");
-        collection = hardwareMap.dcMotor.get("collection");
+
+        //DCMOTORCONTROLLER ---
 
         //ENCODER ---
         leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS); //Resets encoder
@@ -72,51 +71,28 @@ public class HertzTeleOp extends LinearOpMode {
             // left_stick_button, right_stick_button, dpad_up/down/left/right
 
             //A more controlled, less violent movement
-            if (gamepad1.left_stick_y > 0 && leftPower > -1) {
-                leftPower -= 0.25;
-            } else if (gamepad1.left_stick_y < 0 && leftPower < 1) {
-                leftPower += 0.25;
-            }
-            if (gamepad1.right_stick_y > 0 && rightPower > -1) {
-                rightPower -= 0.25;
-            } else if (gamepad1.right_stick_y < 0 && rightPower < 1) {
-                rightPower += 0.25;
-            }
-            if (gamepad1.left_stick_y == 0) {
-                leftPower = 0;
-            }
-            if (gamepad1.right_stick_y == 0) {
-                rightPower = 0;
-            }
-
-            //Slowly raise/lower the bucket
-            if (gamepad1.dpad_down && bucketPower > -1) {
-                bucketPower = -0.2;
-            } else if (gamepad1.dpad_up && bucketPower < 1) {
-                bucketPower = +0.2;
-            } else {
-                bucketPower = 0;
-            }
-
-            //Make the collectors
             if (gamepad1.left_bumper) {
-                collectionPower = -1;
-            } else if (gamepad1.right_bumper) {
-                collectionPower = 1;
+                rightPower = -1;
+                leftPower = -1;
+            }
+            if (gamepad1.right_bumper) {
+                rightPower = 1;
+                leftPower = 1;
+            }
+
+            if (gamepad1.right_bumper != true && gamepad1.left_bumper != true) {
+                rightPower = 0;
+                leftPower = 0;
             }
 
             // write the values to the motors
             rightMotors.setPower(rightPower);
             leftMotors.setPower(leftPower);
-            collection.setPower(collectionPower);
-            bucket.setPower(bucketPower);
 
             //Log to logs
             telemetry.addData("Text", "*** Robot Data***");
             telemetry.addData("left tgt pwr", "left  pwr: " + String.format("%.2f", leftPower));
             telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", rightPower));
-            telemetry.addData("bucket tgt pwr", "bucket pwr: " + String.format("%.2f", bucketPower));
-            telemetry.addData("collection tgt pwr: ", "collection pwr" + String.format("%.2f", collectionPower));
             waitOneFullHardwareCycle();
         }
     }
