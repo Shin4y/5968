@@ -42,25 +42,15 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
  * Written by; Sa'id Kharboutli
  */
 public class HertzPresentation extends LinearOpMode {
-    DcMotor leftMotors, rightMotors;
-    double leftPower, rightPower;
+    DcMotor rightMotors, leftMotors;
+    double rightPower, leftPower;
 
     public void runOpMode() throws InterruptedException {
         //WHEELS ---
         rightMotors = hardwareMap.dcMotor.get("motors_right");
         leftMotors = hardwareMap.dcMotor.get("motors_left");
-        leftMotors.setDirection(DcMotor.Direction.REVERSE);
 
-        //COLLECTION MECH ---
-
-        //DCMOTORCONTROLLER ---
-
-        //ENCODER ---
-        leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS); //Resets encoder
-        while (leftMotors.getCurrentPosition() != 0) {
-            leftMotors.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-            waitOneFullHardwareCycle();
-        }
+        //COLLECTION MECH --
 
         waitForStart();
 
@@ -70,7 +60,6 @@ public class HertzPresentation extends LinearOpMode {
             // left_stick_y/x, right_stick_y/x, a, b, x, y, left_trigger/bumper, right_trigger/bumper
             // left_stick_button, right_stick_button, dpad_up/down/left/right
 
-            //A more controlled, less violent movement
             if (gamepad1.left_bumper) {
                 rightPower = -1;
                 leftPower = -1;
@@ -79,8 +68,7 @@ public class HertzPresentation extends LinearOpMode {
                 rightPower = 1;
                 leftPower = 1;
             }
-
-            if (gamepad1.right_bumper != true && gamepad1.left_bumper != true) {
+            if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 rightPower = 0;
                 leftPower = 0;
             }
@@ -97,4 +85,6 @@ public class HertzPresentation extends LinearOpMode {
         }
     }
 }
+
+
 //Lest's Meme
