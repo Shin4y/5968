@@ -66,9 +66,11 @@ public class MakerFaireThatHertz extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        DcMotor leftMotor  = hardwareMap.dcMotor.get("left_motor");
-        DcMotor rightMotor = hardwareMap.dcMotor.get("right_motor");
-        telemetry.addData("Status", "Motors Initialized");
+        leftMotor  = hardwareMap.dcMotor.get("left_motor");
+        rightMotor = hardwareMap.dcMotor.get("right_motor");
+        arm = hardwareMap.dcMotor.get("arm");
+
+        telemetry.addData("Status", "Motors Initialized, Retrieved XML");
 
         leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
