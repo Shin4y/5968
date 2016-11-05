@@ -59,6 +59,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("Presentation", HertzPresentation.class);
     manager.register("HertzTeleOp", HertzTeleOp.class);
     manager.register("HertzAutonomous", HertzAutonomous.class);
+    manager.register("Maker Faire", MkerFaire.class);
 
     //manager.register("AdafruitRGBExample", AdafruitRGBExample.class);
     //manager.register("ColorSensorDriver", ColorSensorDriver.class);
