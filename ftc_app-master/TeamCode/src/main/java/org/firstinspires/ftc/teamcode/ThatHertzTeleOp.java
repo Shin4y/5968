@@ -107,5 +107,10 @@ public class ThatHertzTeleOp extends OpMode {
             backRightMotor.setPower(-gamepad1.right_stick_y);
         }
 
+        telemetry.addData("Collection Running", catchWheel.getPower() > 0);
+        telemetry.addData("FL Power", frontLeftMotor.getPower());
+        telemetry.addData("FR Power", frontRightMotor.getPower());
+        telemetry.addData("BL Power", backLeftMotor.getPower());
+        telemetry.addData("BR Power", backRightMotor.getPower());
     }
 }
