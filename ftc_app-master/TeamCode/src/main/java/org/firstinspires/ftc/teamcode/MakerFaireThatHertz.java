@@ -66,7 +66,7 @@ public class MakerFaireThatHertz extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        leftMotor  = hardwareMap.dcMotor.get("left_motor");
+        leftMotor = hardwareMap.dcMotor.get("left_motor");
         rightMotor = hardwareMap.dcMotor.get("right_motor");
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -75,12 +75,8 @@ public class MakerFaireThatHertz extends OpMode
         leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         telemetry.addData("Status", "Motors Reversed");
-}
-
-    //Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-    @Override
-    public void init_loop() {
     }
+
 
     //Code to run ONCE when the driver hits PLAY
     @Override
@@ -103,10 +99,4 @@ public class MakerFaireThatHertz extends OpMode
         telemetry.addData("Right Motor", "Power: " + rightMotor.getPower());
         telemetry.addData("Arm Motor", "Power: " + arm.getPower());
     }
-
-    //Code to run ONCE after the driver hits STOP
-    @Override
-    public void stop() {
-    }
-
 }
