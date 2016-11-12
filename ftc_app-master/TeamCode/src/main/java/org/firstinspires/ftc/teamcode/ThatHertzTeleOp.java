@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,21 +7,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-    import java.text.SimpleDateFormat;
-    import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @TeleOp(name = "[5968] That Hertz TeleOp", group = "TeleOp")
 public class ThatHertzTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
-    //For wheels
+    //for wheels
     private DcMotor frontLeftMotor = null;
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
 
-    //For shooting mechanism
+    //for shooting mechanism
 //    private DcMotor catchWheel = null;
 //    private DcMotor midWheel = null;
 //    private DcMotor shootRight = null;
@@ -35,7 +33,7 @@ public class ThatHertzTeleOp extends OpMode {
     public void init() {
         telemetry.addData("Status", "Initializing");
 
-        //For wheels
+        //for wheels
         frontLeftMotor = hardwareMap.dcMotor.get("f_l_m");
         frontRightMotor = hardwareMap.dcMotor.get("f_r_m");
         backLeftMotor = hardwareMap.dcMotor.get("b_l_m");
@@ -105,8 +103,8 @@ public class ThatHertzTeleOp extends OpMode {
             frontRightMotor.setPower(-.4);
             backLeftMotor.setPower(-.4);
         } else {
-            frontLeftMotor.setPower(-gamepad1.left_stick_y * .6);
-            backLeftMotor.setPower(-gamepad1.left_stick_y * .4);
+            frontLeftMotor.setPower(-gamepad1.left_stick_y * .7);
+            backLeftMotor.setPower(-gamepad1.left_stick_y * .7);
             frontRightMotor.setPower(-gamepad1.right_stick_y * .4);
             backRightMotor.setPower(-gamepad1.right_stick_y * .4);
         }
