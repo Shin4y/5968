@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
+import com.qualcomm.robotcore.hardware.LegacyModule;
 
 @TeleOp(name = "ThatHertzAutonomous", group = "ThatHertz")
 public class ThatHertzAutonomous extends OpMode {
@@ -24,11 +27,15 @@ public class ThatHertzAutonomous extends OpMode {
     private DcMotor backRightMotor = null;
 
     //For shooting mechanism
-    private DcMotor catchWheel = null;
-    private DcMotor midWheel = null;
-    private DcMotor shootRight = null;
-    private DcMotor shootLeft = null;
-    private Servo pipeAnchor = null;
+//    private DcMotor catchWheel = null;
+//    private DcMotor midWheel = null;
+//    private DcMotor shootRight = null;
+//    private DcMotor shootLeft = null;
+//    private Servo pipeAnchor = null;
+
+    //private LegacyModule legacyModule = null;
+
+    //For sensor
 
     //code to run on init
     @Override
@@ -42,16 +49,22 @@ public class ThatHertzAutonomous extends OpMode {
         backRightMotor = hardwareMap.dcMotor.get("b_r_m");
 
         //For shooting mechanism
-        catchWheel = hardwareMap.dcMotor.get("catch_wheel");
-        midWheel = hardwareMap.dcMotor.get("mid_wheel");
-        shootRight = hardwareMap.dcMotor.get("shoot_right");
-        shootLeft = hardwareMap.dcMotor.get("shoot_left");
-        pipeAnchor = hardwareMap.servo.get("pipe_string");
-        //make sure all motors spin in the same direction (check to see if it works fine as is)
-//        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-//        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-//        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-//        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+//        catchWheel = hardwareMap.dcMotor.get("catch_wheel");
+//        midWheel = hardwareMap.dcMotor.get("mid_wheel");
+//        shootRight = hardwareMap.dcMotor.get("shoot_right");
+//        shootLeft = hardwareMap.dcMotor.get("shoot_left");
+//        pipeAnchor = hardwareMap.servo.get("pipe_string");
+
+        //make sure all motors spin in the same direction
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        //sensors
+//        legacyModule = hardwareMap.legacyModule.get("legacy");
+//        legacyModule.enable9v(4, true);
+//        legacyModule.enable9v(5, true);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -65,6 +78,9 @@ public class ThatHertzAutonomous extends OpMode {
     //Main code that will run during play
     @Override
     public void loop() {
-        
+        backLeftMotor.setPower(1);
+        backRightMotor.setPower(1);
+        frontLeftMotor.setPower(1);
+        frontRightMotor.setPower(1);
     }
 }

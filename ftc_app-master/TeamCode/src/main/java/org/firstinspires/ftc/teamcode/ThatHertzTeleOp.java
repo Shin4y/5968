@@ -23,11 +23,11 @@ public class ThatHertzTeleOp extends OpMode {
     private DcMotor backRightMotor = null;
 
     //For shooting mechanism
-    private DcMotor catchWheel = null;
-    private DcMotor midWheel = null;
-    private DcMotor shootRight = null;
-    private DcMotor shootLeft = null;
-    private Servo pipeAnchor = null;
+//    private DcMotor catchWheel = null;
+//    private DcMotor midWheel = null;
+//    private DcMotor shootRight = null;
+//    private DcMotor shootLeft = null;
+//    private Servo pipeAnchor = null;
 
 
     //code to run on init
@@ -42,16 +42,17 @@ public class ThatHertzTeleOp extends OpMode {
         backRightMotor = hardwareMap.dcMotor.get("b_r_m");
 
         //For shooting mechanism
-        catchWheel = hardwareMap.dcMotor.get("catch_wheel");
-        midWheel = hardwareMap.dcMotor.get("mid_wheel");
-        shootRight = hardwareMap.dcMotor.get("shoot_right");
-        shootLeft = hardwareMap.dcMotor.get("shoot_left");
-        pipeAnchor = hardwareMap.servo.get("pipe_string");
-        //make sure all motors spin in the same direction (check to see if it works fine as is)
-//        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-//        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-//        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-//        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+//        catchWheel = hardwareMap.dcMotor.get("catch_wheel");
+//        midWheel = hardwareMap.dcMotor.get("mid_wheel");
+//        shootRight = hardwareMap.dcMotor.get("shoot_right");
+//        shootLeft = hardwareMap.dcMotor.get("shoot_left");
+//        pipeAnchor = hardwareMap.servo.get("pipe_string");
+        //make sure all motors spin in the same direction
+
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -67,50 +68,50 @@ public class ThatHertzTeleOp extends OpMode {
     public void loop() {
         telemetry.addData("Status", "Running: " + runtime.toString());
         //SHOOTING
-        if(gamepad1.right_stick_button) {
-            //toggles instead of using up 2 different buttons
-        }
-            if(pipeAnchor.getPosition() == 0) {
-                pipeAnchor.setPosition(1);
-            } else {
-                pipeAnchor.setPosition(0);
-            }
+//        if(gamepad1.right_stick_button) {
+//            //toggles instead of using up 2 different buttons
+//        }
+//            if(pipeAnchor.getPosition() == 0) {
+//                pipeAnchor.setPosition(1);
+//            } else {
+//                pipeAnchor.setPosition(0);
+//            }
 
-        if(gamepad1.a) {
-            if(catchWheel.getPower() == 0) {
-                catchWheel.setPower(1);
-                midWheel.setPower(1);
-                shootLeft.setPower(1);
-                shootRight.setPower(1);
-            } else {
-                catchWheel.setPower(0);
-                midWheel.setPower(0);
-                shootLeft.setPower(0);
-                shootRight.setPower(0);
-            }
-        }
+//        if(gamepad1.a) {
+//            if(catchWheel.getPower() == 0) {
+//                catchWheel.setPower(1);
+//                midWheel.setPower(1);
+//                shootLeft.setPower(1);
+//                shootRight.setPower(1);
+//            } else {
+//                catchWheel.setPower(0);
+//                midWheel.setPower(0);
+//                shootLeft.setPower(0);
+//                shootRight.setPower(0);
+//            }
+//        }
 
         //MOVING
         if(gamepad1.dpad_left) {
             //move left
-            frontLeftMotor.setPower(1);
-            backRightMotor.setPower(1);
-            frontRightMotor.setPower(-1);
-            backLeftMotor.setPower(-1);
+            frontLeftMotor.setPower(-.4);
+            backRightMotor.setPower(-.4);
+            frontRightMotor.setPower(.4);
+            backLeftMotor.setPower(.4);
         } else if(gamepad1.dpad_right) {
             //move right
-            frontLeftMotor.setPower(-1);
-            backRightMotor.setPower(-1);
-            frontRightMotor.setPower(1);
-            backLeftMotor.setPower(1);
+            frontLeftMotor.setPower(.4);
+            backRightMotor.setPower(.4);
+            frontRightMotor.setPower(-.4);
+            backLeftMotor.setPower(-.4);
         } else {
-            frontLeftMotor.setPower(-gamepad1.left_stick_y);
-            backLeftMotor.setPower(-gamepad1.left_stick_y);
-            frontRightMotor.setPower(-gamepad1.right_stick_y);
-            backRightMotor.setPower(-gamepad1.right_stick_y);
+            frontLeftMotor.setPower(-gamepad1.left_stick_y * .4);
+            backLeftMotor.setPower(-gamepad1.left_stick_y * .4);
+            frontRightMotor.setPower(-gamepad1.right_stick_y * .4);
+            backRightMotor.setPower(-gamepad1.right_stick_y * .4);
         }
 
-        telemetry.addData("Collection Running", catchWheel.getPower() > 0);
+//        telemetry.addData("Collection Running", catchWheel.getPower() > 0);
         telemetry.addData("FL Power", frontLeftMotor.getPower());
         telemetry.addData("FR Power", frontRightMotor.getPower());
         telemetry.addData("BL Power", backLeftMotor.getPower());
