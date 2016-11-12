@@ -4,12 +4,12 @@ package org.firstinspires.ftc.teamcode;
  * Created by Sa'id on 11/6/2016.
  */
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DeviceManager;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -33,22 +33,25 @@ public class ThatHertzAutonomous extends OpMode {
 //    private DcMotor shootLeft = null;
 //    private Servo pipeAnchor = null;
 
-    //private LegacyModule legacyModule = null;
+    //for sensor
+    private LegacyModule legacyModule = null;
+    private UltrasonicSensor ultrasonicLeft = null;
+    private UltrasonicSensor ultrasonicRight = null;
+    private double ultrasonicDifference = 0.0;
 
-    //For sensor
 
     //code to run on init
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
 
-        //For wheels
+        //for wheels
         frontLeftMotor = hardwareMap.dcMotor.get("f_l_m");
         frontRightMotor = hardwareMap.dcMotor.get("f_r_m");
         backLeftMotor = hardwareMap.dcMotor.get("b_l_m");
         backRightMotor = hardwareMap.dcMotor.get("b_r_m");
 
-        //For shooting mechanism
+        //for shooting mechanism
 //        catchWheel = hardwareMap.dcMotor.get("catch_wheel");
 //        midWheel = hardwareMap.dcMotor.get("mid_wheel");
 //        shootRight = hardwareMap.dcMotor.get("shoot_right");
@@ -62,9 +65,12 @@ public class ThatHertzAutonomous extends OpMode {
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //sensors
-//        legacyModule = hardwareMap.legacyModule.get("legacy");
-//        legacyModule.enable9v(4, true);
-//        legacyModule.enable9v(5, true);
+        legacyModule = hardwareMap.legacyModule.get("legacy");
+        legacyModule.enable9v(4, true);
+        legacyModule.enable9v(5, true);
+        ultrasonicLeft = hardwareMap.ultrasonicSensor.get("ultrasonic_l");
+        ultrasonicRight = hardwareMap.ultrasonicSensor.get("ultrasonic_r");
+
 
         telemetry.addData("Status", "Initialized");
     }
@@ -75,12 +81,34 @@ public class ThatHertzAutonomous extends OpMode {
     public void start() {runtime.reset();}
 
 
-    //Main code that will run during play
+    //main code that will run during play
     @Override
     public void loop() {
-        backLeftMotor.setPower(1);
-        backRightMotor.setPower(1);
-        frontLeftMotor.setPower(1);
-        frontRightMotor.setPower(1);
+        boolean wereGood = true;
+        ultrasonicDifference = ultrasonicLeft.getUltrasonicLevel() - ultrasonicRight.getUltrasonicLevel(); //good to make sure our robot is parallel to the wall
+        while(wereGood) {
+            while(Math.abs(ultrasonicDifference) <= 1 && ultrasonicRight.getUltrasonicLevel() < 160) {
+                backLeftMotor.setPower(.5);
+                backRightMotor.setPower(.5);
+                frontLeftMotor.setPower(.5);
+                frontRightMotor.setPower(.5);
+            }
+            while(ultrasonicDifference > 1) {
+                backRightMotor.setPower(0);
+                frontRightMotor.setPower(0);
+                backLeftMotor.setPower(.5);
+                frontLeftMotor.setPower(.5);
+            }
+            while(ultrasonicDifference < -1) {
+                backRightMotor.setPower(.5);
+                frontRightMotor.setPower(.5);
+                backLeftMotor.setPower(0);
+                frontLeftMotor.setPower(0);
+            }
+            if(ultrasonicRight.getUltrasonicLevel() > 160)
+            {
+                wereGood = false;
+            }
+        }
     }
 }
