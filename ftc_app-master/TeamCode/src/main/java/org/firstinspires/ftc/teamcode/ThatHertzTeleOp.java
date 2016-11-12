@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
     import java.text.SimpleDateFormat;
     import java.util.Date;
 
-@TeleOp(name = "[5968] That Hertz TeleOp", group = "ThatHertz")
+@TeleOp(name = "[5968] That Hertz TeleOp", group = "TeleOp")
 public class ThatHertzTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -105,7 +105,7 @@ public class ThatHertzTeleOp extends OpMode {
             frontRightMotor.setPower(-.4);
             backLeftMotor.setPower(-.4);
         } else {
-            frontLeftMotor.setPower(-gamepad1.left_stick_y * .4);
+            frontLeftMotor.setPower(-gamepad1.left_stick_y * .6);
             backLeftMotor.setPower(-gamepad1.left_stick_y * .4);
             frontRightMotor.setPower(-gamepad1.right_stick_y * .4);
             backRightMotor.setPower(-gamepad1.right_stick_y * .4);
