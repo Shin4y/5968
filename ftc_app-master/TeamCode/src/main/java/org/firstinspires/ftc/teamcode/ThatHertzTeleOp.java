@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @TeleOp(name = "[5968] That Hertz TeleOp", group = "TeleOp")
 public class ThatHertzTeleOp extends OpMode {
@@ -19,6 +15,13 @@ public class ThatHertzTeleOp extends OpMode {
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor backRightMotor = null;
+
+    //for collection sweeper
+    private DcMotor collection = null;
+
+    //for beacon scoring
+    private Servo rightBeaconServo = null;
+    private Servo leftBeaconServo = null;
 
     //code to run on init
     @Override
@@ -31,18 +34,20 @@ public class ThatHertzTeleOp extends OpMode {
         backLeftMotor = hardwareMap.dcMotor.get("b_l_m");
         backRightMotor = hardwareMap.dcMotor.get("b_r_m");
 
-        //For shooting mechanism
-//        catchWheel = hardwareMap.dcMotor.get("catch_wheel");
-//        midWheel = hardwareMap.dcMotor.get("mid_wheel");
-//        shootRight = hardwareMap.dcMotor.get("shoot_right");
-//        shootLeft = hardwareMap.dcMotor.get("shoot_left");
-//        pipeAnchor = hardwareMap.servo.get("pipe_string");
-        //make sure all motors spin in the same direction
-
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        //for collection sweeper
+        collection = hardwareMap.dcMotor.get("collection");
+
+        //for beacon scoring
+        rightBeaconServo = hardwareMap.servo.get("r_b_s");
+        leftBeaconServo = hardwareMap.servo.get("l_b_s");
+
+        rightBeaconServo.setPosition(0); //probably will need changing (especially left)
+        leftBeaconServo.setPosition(0);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -60,20 +65,20 @@ public class ThatHertzTeleOp extends OpMode {
 
         //MOVING
         if(gamepad1.dpad_left) {
-            //move left
+            //strafe left
             frontLeftMotor.setPower(-.4);
             backRightMotor.setPower(-.4);
             frontRightMotor.setPower(.4);
             backLeftMotor.setPower(.4);
         } else if(gamepad1.dpad_right) {
-            //move right
+            //strafe right
             frontLeftMotor.setPower(.4);
             backRightMotor.setPower(.4);
             frontRightMotor.setPower(-.4);
             backLeftMotor.setPower(-.4);
         } else {
 
-            if (gamepad1.left_bumper) {
+            if (gamepad1.left_bumper) { //for accurate movement
                 frontLeftMotor.setPower(-gamepad1.left_stick_y * .2);
                 backLeftMotor.setPower(-gamepad1.left_stick_y * .2);
                 frontRightMotor.setPower(-gamepad1.right_stick_y * .2);
@@ -87,10 +92,27 @@ public class ThatHertzTeleOp extends OpMode {
             }
         }
 
-//        telemetry.addData("Collection Running", catchWheel.getPower() > 0);
-        telemetry.addData("FL Power", frontLeftMotor.getPower());
-        telemetry.addData("FR Power", frontRightMotor.getPower());
-        telemetry.addData("BL Power", backLeftMotor.getPower());
-        telemetry.addData("BR Power", backRightMotor.getPower());
+        //COLLECTION
+        if(gamepad1.a) {
+            collection.setPower(.75);
+        }
+        else {
+            collection.setPower(0);
+        }
+
+        //BEACONS
+        if(gamepad1.left_bumper) {
+            leftBeaconServo.setPosition(Math.abs(leftBeaconServo.getPosition() - 1));
+        } else if(gamepad1.right_bumper) {
+            rightBeaconServo.setPosition(Math.abs(rightBeaconServo.getPosition() - 1));
+        }
+
+        telemetry.addData("FLM Power", frontLeftMotor.getPower());
+        telemetry.addData("FRM Power", frontRightMotor.getPower());
+        telemetry.addData("BLM Power", backLeftMotor.getPower());
+        telemetry.addData("BRM Power", backRightMotor.getPower());
+        telemetry.addData("Collection Power", collection.getPower());
+        telemetry.addData("LS Position", leftBeaconServo.getPosition());
+        telemetry.addData("RS Position", rightBeaconServo.getPosition());
     }
 }
