@@ -7,11 +7,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.LegacyModule;
 
-@Autonomous(name = "[5968] ThatHertz TeleOp", group = "TeleOp")
+@Autonomous(name = "[5968] ThatHertz Autonomous", group = "TeleOp")
 public class ThatHertzSensorAutonomous extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -39,6 +40,7 @@ public class ThatHertzSensorAutonomous extends OpMode {
         backRightMotor = hardwareMap.dcMotor.get("b_r_m");
 
         //for sensors
+        legacyModule = hardwareMap.legacyModule.get("legacy");
         legacyModule.enable9v(4, true);
         legacyModule.enable9v(5, true);
         ultrasonicLeft = hardwareMap.ultrasonicSensor.get("ultrasonic_l");
@@ -67,12 +69,20 @@ public class ThatHertzSensorAutonomous extends OpMode {
         boolean wereGood = true;
         while (wereGood) {
             ultrasonicDifference = ultrasonicLeft.getUltrasonicLevel() - ultrasonicRight.getUltrasonicLevel();
+            telemetry.addData("Left Ultrasonic", ultrasonicLeft.getUltrasonicLevel());
+            telemetry.addData("Right Ultrasonic", ultrasonicRight.getUltrasonicLevel());
+            telemetry.addData("Ultrasonic Difference", ultrasonicDifference);
+
             while (Math.abs(ultrasonicDifference) <= 2.0 && ultrasonicRight.getUltrasonicLevel() < 160) {
                 backLeftMotor.setPower(0.3);
                 backRightMotor.setPower(0.3);
                 frontLeftMotor.setPower(0.3);
                 frontRightMotor.setPower(0.3);
                 ultrasonicDifference = ultrasonicLeft.getUltrasonicLevel() - ultrasonicRight.getUltrasonicLevel();
+
+                telemetry.addData("Left Ultrasonic", ultrasonicLeft.getUltrasonicLevel());
+                telemetry.addData("Right Ultrasonic", ultrasonicRight.getUltrasonicLevel());
+                telemetry.addData("Ultrasonic Difference", ultrasonicDifference);
             }
             while(ultrasonicDifference > 2) {
                 backLeftMotor.setPower(0.0);
@@ -80,6 +90,10 @@ public class ThatHertzSensorAutonomous extends OpMode {
                 backRightMotor.setPower(0.2);
                 frontRightMotor.setPower(0.2);
                 ultrasonicDifference = ultrasonicLeft.getUltrasonicLevel() - ultrasonicRight.getUltrasonicLevel();
+
+                telemetry.addData("Left Ultrasonic", ultrasonicLeft.getUltrasonicLevel());
+                telemetry.addData("Right Ultrasonic", ultrasonicRight.getUltrasonicLevel());
+                telemetry.addData("Ultrasonic Difference", ultrasonicDifference);
             }
             while(ultrasonicDifference < -2) {
                 backLeftMotor.setPower(0.2);
@@ -87,10 +101,17 @@ public class ThatHertzSensorAutonomous extends OpMode {
                 backRightMotor.setPower(0.0);
                 frontRightMotor.setPower(0.0);
                 ultrasonicDifference = ultrasonicLeft.getUltrasonicLevel() - ultrasonicRight.getUltrasonicLevel();
+
+                telemetry.addData("Left Ultrasonic", ultrasonicLeft.getUltrasonicLevel());
+                telemetry.addData("Right Ultrasonic", ultrasonicRight.getUltrasonicLevel());
+                telemetry.addData("Ultrasonic Difference", ultrasonicDifference);
             }
             if(ultrasonicRight.getUltrasonicLevel() >= 160)
             {
                 wereGood = false;
+                telemetry.addData("Left Ultrasonic", ultrasonicLeft.getUltrasonicLevel());
+                telemetry.addData("Right Ultrasonic", ultrasonicRight.getUltrasonicLevel());
+                telemetry.addData("Ultrasonic Difference", ultrasonicDifference);
             }
         }
     }
